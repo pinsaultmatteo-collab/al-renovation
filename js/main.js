@@ -242,10 +242,33 @@
         }
       });
     };
+    const swipe = $('#worksSwipe');
+    let nudging = false; let nudged = false; let userScrolled = false;
+    const hideSwipe = () => { if (swipe) swipe.classList.add('is-hidden'); };
+    // Small "peek" of the rail so the horizontal scroll is obvious on touch screens.
+    const nudge = () => {
+      if (nudged || userScrolled || reduce) return;
+      nudged = true; nudging = true;
+      const t0 = performance.now(); const D = 1500; const amp = Math.min(72, worksTrack.clientWidth * 0.18);
+      const frame = (t) => {
+        const p = Math.min(1, (t - t0) / D);
+        worksTrack.scrollLeft = amp * Math.sin(p * Math.PI);
+        if (p < 1) requestAnimationFrame(frame); else { worksTrack.scrollLeft = 0; nudging = false; }
+      };
+      requestAnimationFrame(frame);
+    };
     const buildMobile = () => {
       if (worksTween) { worksTween.scrollTrigger && worksTween.scrollTrigger.kill(); worksTween.kill(); worksTween = null; gsap.set(worksTrack, { clearProps: 'transform' }); }
-      const onS = () => { const max = worksTrack.scrollWidth - worksTrack.clientWidth; setProgress(max > 0 ? worksTrack.scrollLeft / max : 0); };
+      const onS = () => {
+        const max = worksTrack.scrollWidth - worksTrack.clientWidth; setProgress(max > 0 ? worksTrack.scrollLeft / max : 0);
+        if (!nudging && worksTrack.scrollLeft > 24) { userScrolled = true; hideSwipe(); }
+      };
       worksTrack.addEventListener('scroll', onS, { passive: true });
+      worksTrack.addEventListener('touchstart', () => { if (nudging) { nudging = false; worksTrack.scrollLeft = 0; } }, { passive: true });
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => { if (entries[0].isIntersecting) { setTimeout(nudge, 450); io.disconnect(); } }, { threshold: 0.35 });
+        io.observe(worksTrack);
+      }
     };
     if (mm.matches) buildDesktop(); else buildMobile();
     mm.addEventListener('change', (e) => { if (e.matches) buildDesktop(); else buildMobile(); if (hasGsap) ScrollTrigger.refresh(); });

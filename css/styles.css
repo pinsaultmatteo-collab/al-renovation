@@ -452,7 +452,7 @@ section { position: relative; padding: clamp(84px, 11vw, 150px) 0; }
   .nav__phone { display: none; }
   /* Works: native horizontal scroll instead of pinned scrub */
   .works__pin { min-height: 0; padding: clamp(72px, 10vw, 100px) 0; }
-  .works__track { overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; width: auto; padding-left: var(--gutter); }
+  .works__track { overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-left: var(--gutter); scrollbar-width: none; -webkit-overflow-scrolling: touch; width: auto; padding-left: var(--gutter); }
   .works__track::-webkit-scrollbar { display: none; }
   .work { scroll-snap-align: start; width: min(82vw, 560px); aspect-ratio: 4 / 5; }
   .work--cta { width: min(70vw, 360px); }
@@ -505,6 +505,33 @@ section { position: relative; padding: clamp(84px, 11vw, 150px) 0; }
   .radar .dot text { font-size: 15px; }
   .radar__ringlabels text { font-size: 14px; }
   .radar__home text { font-size: 17px; }
+}
+/* Mobile: hero centred, swipe hint on the projects rail */
+.works__stage { position: relative; }
+.works__swipe { display: none; }
+@media (max-width: 900px) {
+  .hero__copy { text-align: center; }
+  .hero__kicker { justify-content: center; }
+  .hero__kicker::before { display: none; }
+  .hero__lead { margin-left: auto; margin-right: auto; }
+  .hero__cta, .hero__trust { justify-content: center; }
+  .hero__visual { margin: 0 auto; }
+  .hero__pill { left: 50%; transform: translateX(-50%); }
+  .hero__stats { text-align: center; }
+  .stat { align-items: center; margin-right: 0; padding-left: 12px; padding-right: 12px; }
+  .stat__label { max-width: none; }
+
+  .works__swipe {
+    display: inline-flex; align-items: center; gap: 10px; position: absolute; left: 50%; top: 16px; z-index: 2;
+    transform: translateX(-50%); padding: 10px 16px; border-radius: 999px; pointer-events: none; white-space: nowrap;
+    background: rgba(15,14,12,0.86); border: 1px solid var(--line-strong); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink);
+    transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+  }
+  .works__swipe.is-hidden { opacity: 0; transform: translate(-50%, -8px); }
+  .works__swipe svg { width: 38px; height: 18px; overflow: visible; }
+  .works__swipe .swipe-dot { animation: swipeDot 1.5s var(--ease-in-out) infinite; }
+  @keyframes swipeDot { 0%, 100% { transform: translateX(-9px); } 50% { transform: translateX(9px); } }
 }
 @media (max-width: 380px) {
   .hero__display { font-size: 2.6rem; }
