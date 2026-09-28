@@ -12,6 +12,7 @@
   const hasGsap = typeof window.gsap !== 'undefined' && typeof window.ScrollTrigger !== 'undefined';
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const touch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
   const $ = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
   const navH = () => parseFloat(getComputedStyle(html).getPropertyValue('--nav-h')) || 80;
@@ -28,7 +29,9 @@
      Smooth scroll (Lenis)
   ------------------------------------------------------------------ */
   let lenis = null;
-  if (hasGsap && !reduce && typeof window.Lenis !== 'undefined') {
+  if (hasGsap) ScrollTrigger.config({ ignoreMobileResize: true });
+  // Native scrolling on touch screens: smoother than a scroll library on phones.
+  if (hasGsap && !reduce && !touch && typeof window.Lenis !== 'undefined') {
     lenis = new window.Lenis({ lerp: 0.1, smoothWheel: true, wheelMultiplier: 1 });
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add((t) => lenis.raf(t * 1000));
@@ -190,7 +193,7 @@
     });
     gsap.to('.footer__big', { yPercent: -14, ease: 'none', scrollTrigger: { trigger: '.footer', start: 'top bottom', end: 'bottom bottom', scrub: true } });
     gsap.from('.radar .dot', { scale: 0, opacity: 0, duration: 0.7, ease: 'back.out(2)', stagger: 0.06, transformOrigin: '50% 50%', scrollTrigger: { trigger: '.radar', start: 'top 75%', once: true } });
-    gsap.to('.hero__bg', { yPercent: 12, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+    if (!touch) gsap.to('.hero__bg', { yPercent: 12, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
   } else {
     $$('[data-words]').forEach((el) => splitWords(el).forEach((w) => (w.style.opacity = 1)));
   }
@@ -249,7 +252,7 @@
     const nudge = () => {
       if (nudged || userScrolled || reduce) return;
       nudged = true; nudging = true;
-      const t0 = performance.now(); const D = 1500; const amp = Math.min(72, worksTrack.clientWidth * 0.18);
+      const t0 = performance.now(); const D = 1400; const amp = Math.min(48, worksTrack.clientWidth * 0.14);
       const frame = (t) => {
         const p = Math.min(1, (t - t0) / D);
         worksTrack.scrollLeft = amp * Math.sin(p * Math.PI);
