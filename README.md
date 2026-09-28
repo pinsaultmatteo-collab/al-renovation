@@ -41,6 +41,14 @@ python3 -m http.server 5173
 ```
 puis ouvrir http://localhost:5173/.
 
+## Déploiement
+
+- Hébergé sur Vercel (projet `al-renovation`, compte pinsaultmatteo-collab), connecté au dépôt GitHub `pinsaultmatteo-collab/al-renovation` : chaque push sur `main` redéploie la production automatiquement.
+- URL de production : https://al-renovation-delta.vercel.app (le sous-domaine `al-renovation.vercel.app` est déjà pris par une autre société).
+- `vercel.json` : URLs propres (`/mentions-legales` sans `.html`), en-têtes de sécurité, cache long sur `css/`, `js/`, `assets/`.
+- Protection des déploiements réglée sur « previews uniquement » pour que la production soit publique ; modifiable dans Vercel → Settings → Deployment Protection.
+- Quand le domaine définitif est acheté : l'ajouter dans Vercel → Settings → Domains, puis remplacer `https://www.al-renov.fr` dans `index.html` (canonical, Open Graph, JSON-LD), `mentions-legales.html`, `sitemap.xml` et `robots.txt`.
+
 ## SEO déjà en place
 
 - Title / meta description optimisés « artisan rénovation Toulouse », canonical, Open Graph, Twitter card, theme-color, manifest.
